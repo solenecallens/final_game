@@ -1,5 +1,7 @@
 body {
 	margin: 0;
+	height: 100vh;
+	overflow: hidden;
 }
 
 
@@ -49,7 +51,13 @@ body {
 	top: 10px;
 	left: 10px;
 }
-
+.ennemie{
+	position: absolute;
+	width: 25px;
+	height: 25px;
+	border-radius: 25px;
+	background-color: #000;
+}
 
 .score{
 	position: absolute;

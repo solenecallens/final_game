@@ -1,4 +1,12 @@
 (function($){
+    var playerWidth;
+    var playerHeight;
+
+    var gameWidth = $("#gameContainer").width();
+    var gameHeight = $("#gameContainer").height();
+
+    playerWidth = $("#player").width();
+    playerHeight = $("#player").height();
 
     $(document).ready(function () {
         // var player, enemy, point, score;
@@ -6,58 +14,21 @@
         var randomPosX = Math.random() * $(window).width();
         var randomPosY = Math.random() * $(window).height();
 
-
-        //Création des éléments du jeu
-        // 	function createGameElements()
-        // 	{
-
-
-        //Créer enmies
-        // var i;
-        // var enemy;
-
-        // for(i=0; i<=nbEnemies; i++)
-        // {
-        // 	enemy = document.createElement("div");
-        // 	enemy.setAttribute("id", "enemy_" + i);
-        // 	enemy.setAttribute
-
-        // }
-
-        // var randomPosX = Math.random()*$(window).width();
-        // var randomPosY = Math.random()*$(window).height();
-
-        // console.log("enemy")
-
-
-        //Créer les éléments à récolter
-        // Créer les obstacles
-
-        // 	}
-
-
-        // // Initialisation du jeu
-        // 	function initGame ()
-        // 	{
-        // 		//Déclarer les variables
-        // 		//Positionner le joueur à sa position initiale
-        // 	}
+        $(".ennemie").each(function(){
+            $this = $(this);
+            setpositionEnnemie($this);
+            moveEnemies($this);
+        });
 
         //Déplacer le player
         $(window).keyup(function(event){
             bougerPerso(event);
         });
 
-
         afficheBonbon();
     });
 
 
-    var gameWidth = $("#gameContainer").width();
-    var gameHeight = $("#gameContainer").height();
-
-    var playerWidth = $("#player").width();
-    var playerHeight = $("#player").height();
 
     // Faire bouger le perso en fonction de la touche appuyee
     function bougerPerso(ev){
@@ -70,7 +41,6 @@
         var newPosLeft = currentPosX - speed;
         var newPosTop = currentPosY - speed;
         var newPosDown = currentPosY + speed;
-
 
 
         // Déplacer vers la droite
@@ -110,7 +80,7 @@
 
         var offsetPlayer = $("#player").offset();
 
-        detectCollision(offsetPlayer);
+        detectCollisionBonbon(offsetPlayer);
     }
 
 
@@ -168,41 +138,90 @@
         }
     }
 
-    function moveEnemies (){
-        //mise à jour de la position des ennemis
+
+    // Donner une postion aléatoire de départ aux ennemies
+    function setpositionEnnemie(ennemie){
+        var ennemie;
+        var ennemieWidth = ennemie.width();
+        var ennemieHeight = ennemie.height();
+
+        var randomPosX = Math.floor(Math.random() * ($(window).width() - ennemieWidth));
+        var randomPosY = Math.floor(Math.random() * ($(window).height() - ennemieHeight));
+
+        ennemie.css({
+            top: randomPosY + "px",
+            left: randomPosX + "px"
+        });
     }
 
-    function refreshGame(){
-        //Appel à la fonction moveEnnemies()
-        //Vérifier collision : appel à la fonction detectCollision
+    // Faire bouger les ennemies
+    function moveEnemies (ennemie){
+        var ennemie;
+
+        setInterval(function(){
+            var ennemiePosition = ennemie.offset();
+            var speed = 25;
+            var direction = Math.floor(Math.random() * 4);
+            var newPosition = ennemiePosition.top + speed;
+
+            if(newPosition >= gameHeight){
+                newPosition = 0;
+                randomPosY = Math.floor(Math.random() * $(window).height());
+                ennemie.css("left", randomPosY+'px');
+            }
+
+            ennemie.css("top", newPosition+'px');
+
+            detectCollisionPerso(ennemiePosition);
+        }, 100);
     }
 
-    var score = 0;
 
-    function detectCollision (positionPerso){
+
+    // detecte la collision si un ennemie touche le personnage
+    function detectCollisionPerso(ennemiePos){
+        var ennemiePos;
+        var currentPosX = $("#player").offset().left;
+        var currentPosY = $("#player").offset().top;
+        var ennemieWidth = $(".ennemie").width();
+        var ennemieHeight = $(".ennemie").height();
+
+        if(ennemiePos.left < currentPosX + playerWidth &&
+            ennemiePos.left + ennemieWidth > currentPosX&&
+            ennemiePos.top < currentPosY + playerHeight &&
+            ennemiePos.top + ennemieHeight > currentPosY){
+
+            alert("perdu");
+
+            // score = 0;
+            // $(".currentScore").html(score);
+        }
+    }
+
+    // detecte la collision si le personnage touche un bonbon
+    function detectCollisionBonbon (positionPerso){
         var $currentBonbon = $(".currentBonbon");
         var bonbonWidth = $currentBonbon.width();
         var bonbonHeight = $currentBonbon.height();
         var positionBonbon = $currentBonbon.offset();
 
-        console.log(positionBonbon.left, positionPerso.left, positionBonbon.left + bonbonWidth);
-
-        if(positionBonbon.left <= positionPerso.left && positionPerso.left <= positionBonbon.left + bonbonWidth){
-            if(positionBonbon.top <= positionPerso.top && positionPerso.top <= positionBonbon.top + bonbonHeight){
+        if(positionBonbon.left < positionPerso.left + playerWidth &&
+           positionBonbon.left + bonbonWidth > positionPerso.left &&
+           positionBonbon.top < positionPerso.top + playerHeight &&
+           positionBonbon.top + bonbonHeight > positionPerso.top){
                 // Bonbon touché
                 $currentBonbon.removeClass("currentBonbon");
-                score++;
-                $(".currentScore").html(score);
 
+                setScore();
                 afficheBonbon();
-            }
         }
-
-
     }
 
-    function setScore (){
 
+    var score = 0;
+    function setScore (){
+        score++;
+        $(".currentScore").html(score);
     }
 
 })(jQuery);
