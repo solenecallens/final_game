@@ -14,21 +14,6 @@ body {
 	left: 50%;
 }
 
-.points {
-	position: absolute;
-	width: 25px;
-	height: 25px;
-	border-radius: 50%;
-	background-color: #e5908d;
-}
-
-.enemy {
-	position: absolute;
-	width: 25px;
-	height: 25px;
-	background-color: #2c333a;
-}
-
 #gameContainer {
 	position: absolute;
 	width: 100%;
@@ -38,15 +23,10 @@ body {
 	z-index: -1;
 }
 
-#end {
-	margin: 0 auto;
-	width: 500px;
-	height: 50px;
-	background-color: #ffffff;
-}
 
 .candy {
 	position: absolute;
+	display: none;
 	width: 50px;
 	z-index: 1;
 }
@@ -68,4 +48,22 @@ body {
 #guimauve_rose {
 	top: 10px;
 	left: 10px;
+}
+
+
+.score{
+	position: absolute;
+	z-index: 2;
+	top: 10px;
+	left: 10px;
+	color: #ffffff;
+	font-size: 40px;
+	font-family: sans-serif;
+}
+
+.score span{
+	display: inline-block;
+}
+.currentBonbon{
+	display: block;
 }
