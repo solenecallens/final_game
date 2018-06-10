@@ -1,207 +1,237 @@
-$(document).ready(function() 
-{
+(function($){
+    var playerWidth;
+    var playerHeight;
+    var score = 0;
 
-	// var player, enemy, point, score;
-	var nbEnemies;
 
-	var randomPosX = Math.random()*$(window).width();
-	var randomPosY = Math.random()*$(window).height();
+    var gameWidth = $("#gameContainer").width();
+    var gameHeight = $("#gameContainer").height();
 
+    console.log(gameWidth);
 
-// //Création des éléments du jeu 
-// 	function createGameElements()
-// 	{
+    playerWidth = $("#player").width();
+    playerHeight = $("#player").height();
 
-		
-		// //Créer enmies
-		// var i;
-		// var enemy;
+    $(document).ready(function () {
+        var nbEnemies;
+        var randomPosX = Math.random() * $(window).width();
+        var randomPosY = Math.random() * $(window).height();
 
-		// for(i=0; i<=nbEnemies; i++) 
-		// {
-		// 	enemy = document.createElement("div");
-		// 	enemy.setAttribute("id", "enemy_" + i);
-		// 	enemy.setAttribute
+        $(".ennemie").each(function(){
+            $this = $(this);
+            setpositionEnnemie($this);
+            moveEnemies($this);
+        });
 
-		// } 
+        //Déplacer le player
+        $(window).keyup(function(event){
+            bougerPerso(event);
+        });
+
+        afficheBonbon();
+    });
+
+
+
+    // Faire bouger le perso en fonction de la touche appuyee
+    function bougerPerso(ev){
+        var speed = 50;
+
+        var currentPosX = $("#player").offset().left;
+        var currentPosY = $("#player").offset().top;
+
+        var newPosRight = currentPosX + speed;
+        var newPosLeft = currentPosX - speed;
+        var newPosTop = currentPosY - speed;
+        var newPosDown = currentPosY + speed;
+
+
+        // Déplacer vers la droite
+        if (ev.keyCode == 39) {
+            if ((newPosRight + playerWidth) > gameWidth) {
+                newPosRight = gameWidth - playerWidth;
+            }
+            $("#player").css({left: newPosRight + "px"});
+        }
+
+        // Déplacer vers la gauche
+        if (ev.keyCode == 37) {
+            if (newPosLeft < 0) {
+                newPosLeft = 0;
+            }
+            $("#player").css({left: newPosLeft + "px"});
+        }
+
+        // Déplacer vers la haut
+        if (ev.keyCode == 38) {
+            if (newPosTop < 0) {
+                newPosTop = 0;
+            }
+
+            $("#player").css({top: newPosTop + "px"});
+        }
+
+        // Déplacer vers la bas
+        if (ev.keyCode == 40) {
+            if ((newPosDown + playerWidth) > gameHeight) {
+                newPosDown = gameHeight - playerHeight;
+            }
+
+            $("#player").css({top: newPosDown + "px"});
+        }
+
+        var offsetPlayer = $("#player").offset();
 
-		// var randomPosX = Math.random()*$(window).width();
-		// var randomPosY = Math.random()*$(window).height();
+        detectCollisionBonbon(offsetPlayer);
+    }
+
+
+    // Affiche un bonbon aléatoirement
+    function afficheBonbon() {
+        var candyType = Math.floor(Math.random() * 3);
+
+        switch (candyType) {
+            case 0:
+                var $bonbon = $("#bonbon");
+                var bonbonWidth = $bonbon.width();
+                var bonbonHeight = $bonbon.height();
+
+                var randomPosX = Math.floor(Math.random() * ($(window).width() - bonbonWidth));
+                var randomPosY = Math.floor(Math.random() * ($(window).height() - bonbonHeight));
+
+                $bonbon.addClass("currentBonbon");
+                $bonbon.css({
+                    top: randomPosY + "px",
+                    left: randomPosX + "px"
+                });
+                break;
+
+            case 1:
+                var $bonbon = $("#coeur");
+                var bonbonWidth = $bonbon.width();
+                var bonbonHeight = $bonbon.height();
+
+                var randomPosX = Math.floor(Math.random() * ($(window).width() - bonbonWidth));
+                var randomPosY = Math.floor(Math.random() * ($(window).height() - bonbonHeight));
+
+                $bonbon.addClass("currentBonbon");
+                $bonbon.css({
+                    top: randomPosY + "px",
+                    left: randomPosX + "px"
+                });
+                break;
+
+            case 2:
+                var $bonbon = $("#guimauve_rose");
+                var bonbonWidth = $bonbon.width();
+                var bonbonHeight = $bonbon.height();
+
+                var randomPosX = Math.floor(Math.random() * ($(window).width() - bonbonWidth));
+                var randomPosY = Math.floor(Math.random() * ($(window).height() - bonbonHeight));
+                $bonbon.addClass("currentBonbon");
+                $bonbon.css({
+                    top: randomPosY + "px",
+                    left: randomPosX + "px"
+                });
+                break;
+
+            default:
+                break;
+        }
+    }
+
+
+    // Donner une postion aléatoire de départ aux ennemies
+    function setpositionEnnemie(ennemie){
+        var ennemie;
+        var ennemieWidth = ennemie.width();
+        var ennemieHeight = ennemie.height();
+
+        var randomPosX = Math.floor(Math.random() * ($(window).width() - ennemieWidth));
+        var randomPosY = Math.floor(Math.random() * ($(window).height() - ennemieHeight));
+
+        ennemie.css({
+            top: randomPosY + "px",
+            left: randomPosX + "px"
+        });
+    }
+
+
+    // Faire descendre les ennemies
+    function moveEnemies (ennemie){
+        var ennemie;
+
+        setInterval(function(){
+            var ennemiePosition = ennemie.offset();
+            var speed = 25;
+            var direction = Math.floor(Math.random() * 4);
+            var newPosition = ennemiePosition.top + speed;
+
+            if(newPosition >= gameHeight){
+                newPosition = 0;
+                randomPosX = Math.floor(Math.random() * $(window).width());
+                ennemie.css("left", randomPosX+'px');
+            }
+
+            ennemie.css("top", newPosition+'px');
+
+            detectCollisionPerso(ennemiePosition);
+        }, 100);
+    }
+
+
+
+    // Detecte la collision si un ennemie touche le personnage
+    function detectCollisionPerso(ennemiePos){
+        var ennemiePos;
+        var currentPosX = $("#player").offset().left;
+        var currentPosY = $("#player").offset().top;
+        var ennemieWidth = $(".ennemie").width();
+        var ennemieHeight = $(".ennemie").height();
+
+        if(ennemiePos.left < currentPosX + playerWidth &&
+            ennemiePos.left + ennemieWidth > currentPosX&&
+            ennemiePos.top < currentPosY + playerHeight &&
+            ennemiePos.top + ennemieHeight > currentPosY){
+
+            if(score <= 1){
+                alert("Perdu ! Vous avez récupéré "+score+" bonbon");
+
+            }else{
+                alert("Perdu ! Vous avez récupéré "+score+" bonbons");
+            }
+            
+
+            score = 0;
+            $(".currentScore").html(score);
+
+        }
+    }
+
+    // detecte la collision si le personnage touche un bonbon
+    function detectCollisionBonbon (positionPerso){
+        var $currentBonbon = $(".currentBonbon");
+        var bonbonWidth = $currentBonbon.width();
+        var bonbonHeight = $currentBonbon.height();
+        var positionBonbon = $currentBonbon.offset();
+
+        if(positionBonbon.left < positionPerso.left + playerWidth &&
+           positionBonbon.left + bonbonWidth > positionPerso.left &&
+           positionBonbon.top < positionPerso.top + playerHeight &&
+           positionBonbon.top + bonbonHeight > positionPerso.top){
+                // Bonbon touché
+                $currentBonbon.removeClass("currentBonbon");
+
+                setScore();
+                afficheBonbon();
+        }
+    }
+
+
+    function setScore (){
+        score++;
+        $(".currentScore").html(score);
+    }
+
+})(jQuery);
 
-		// console.log("enemy")
-
-
-// 		//Créer les éléments à récolter
-// 		// Créer les obstacles
-
-// 	}	
-
-
-// // Initialisation du jeu
-// 	function initGame ()
-// 	{
-// 		//Déclarer les variables
-// 		//Positionner le joueur à sa position initiale
-// 	}
-
-	//Déplacer le player
-	$(window).on("keyup", function(ev) {
-
-		var speed = 50;
-		var currentPosX = $("#player").offset().left;
-		var currentPosY = $("#player").offset().top;
-		var newPosRight = currentPosX + speed;
-		var newPosLeft = currentPosX - speed;
-		var newPosTop = currentPosY - speed;
-		var newPosDown = currentPosY + speed;
-
-		var gameWidth = $("#gameContainer").width();
-		var gameHeight = $("#gameContainer").height();
-
-		var playerWidth = $("#player").width();
-		var playerHeight = $("#player").height();
-		
-
-
-
-
-		// alert(ev.keyCode);
-
-			if(ev.keyCode == 39) 
-			{
-				if((newPosRight + playerWidth) > gameWidth) 
-				{
-					newPosRight = gameWidth - playerWidth;
-				}
-
-				newPosRight = $("#player").css({left: newPosRight + "px"});
-				
-			}
-
-			if(ev.keyCode == 37) {
-
-				if(newPosLeft < 0) 
-				{
-					newPosLeft = 0;
-				}
-
-				$("#player").css({left: newPosLeft + "px"});
-			}
-
-			if(ev.keyCode == 38) {
-
-				if(newPosTop < 0) 
-				{
-					newPosTop = 0;
-				}
-
-				$("#player").css({top: newPosTop + "px"});
-			}
-
-			if(ev.keyCode == 40) {
-
-				if((newPosDown + playerWidth) > gameHeight) 
-				{
-					newPosDown = gameHeight - playerHeight;
-				}
-
-				$("#player").css({top: newPosDown + "px"});
-			}
-
-		console.log("Offset du perso : ");
-		console.log($("#player").offset());
-		console.log(gameWidth);
-		console.log(newPosTop);
-
-
-	})
-
-	//faire apparêtre les bonbons
-	function afficheElements()
-	{
-		var randomPosX = Math.random()*$(window).width();
-		var randomPosY = Math.random()*$(window).height();
-		var candyType = Math.floor(Math.random()*3);
-
-
-		switch(candyType){
-			case 0: 
-				$("#bonbon").css({top: randomPosY + "px"})
-				$("#bonbon").css({left: randomPosX + "px"})
-				break;
-				
-
-		}
-
-		if(candyType == 0)
-		{
-			$("#bonbon").css({top: randomPosY + "px"})
-			$("#bonbon").css({left: randomPosX + "px"})
-		}
-		else {
-			$("#coeur").hide();
-			$("#guimauve_rose").hide();
-		}
-
-		if(candyType == 1)
-		{
-			$("#coeur").css({top: randomPosY + "px"})
-			$("#coeur").css({left: randomPosX + "px"})
-		}
-		else {
-			$("#bonbon").hide();
-		}
-
-		if(candyType == 2)
-		{
-			$("#guimauve_rose").css({top: randomPosY + "px"})
-			$("#guimauve_rose").css({left: randomPosX + "px"})
-
-			else {
-			$("#bonbon").hide();
-			$("#coeur").hide();
-			}
-
-		}
-	}
-
-	afficheElements();
-
-
-
-
-
-
-	
-	
-	
-	// function moveEnemies ()
-	// {
-	// 	//mise à jour de la position des ennemis 
-	// }
-
-	// function refreshGame() 
-	// {
-	// 	//Appel à la fonction moveEnnemies()
-	// 	//Vérifier collision : appel à la fonction detectCollision 
-	// }
-
-
-
-
-	// function detectCollision ()
-	// {
-
-	// }
-
-	// function setScore ()
-	// {
-
-	// }
-
-
-
-
-
-
-});
