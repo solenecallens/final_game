@@ -12,6 +12,8 @@
     playerWidth = $("#player").width();
     playerHeight = $("#player").height();
 
+    $('.retry').hide();
+
     $(document).ready(function () {
         var nbEnemies;
         var randomPosX = Math.random() * $(window).width();
@@ -88,7 +90,7 @@
 
     // Affiche un bonbon aléatoirement
     function afficheBonbon() {
-    var candyType = Math.floor(Math.random() * 3);
+    var candyType = Math.floor(Math.random() * 4);
 
         switch (candyType) {
             case 0:
@@ -122,7 +124,21 @@
                 break;
 
             case 2:
-                var $bonbon = $("#guimauve_rose");
+                var $bonbon = $("#guimauve_jaune");
+                var bonbonWidth = $bonbon.width();
+                var bonbonHeight = $bonbon.height();
+
+                var randomPosX = Math.floor(Math.random() * ($(window).width() - bonbonWidth));
+                var randomPosY = Math.floor(Math.random() * ($(window).height() - bonbonHeight));
+                $bonbon.addClass("currentBonbon");
+                $bonbon.css({
+                    top: randomPosY + "px",
+                    left: randomPosX + "px"
+                });
+                break;
+
+            case 3:
+                var $bonbon = $("#pastille");
                 var bonbonWidth = $bonbon.width();
                 var bonbonHeight = $bonbon.height();
 
@@ -176,7 +192,7 @@
             ennemie.css("top", newPosition+'px');
 
             detectCollisionPerso(ennemiePosition);
-        }, 100);
+        },  100);
     }
 
 
@@ -188,6 +204,7 @@
         var currentPosY = $("#player").offset().top;
         var ennemieWidth = $(".ennemie").width();
         var ennemieHeight = $(".ennemie").height();
+        var indiqueScore = "Vous avez récupéré"
 
         if(ennemiePos.left < currentPosX + playerWidth &&
             ennemiePos.left + ennemieWidth > currentPosX&&
@@ -195,10 +212,21 @@
             ennemiePos.top + ennemieHeight > currentPosY){
 
             if(score <= 1){
-                alert("Perdu ! Vous avez récupéré "+score+" bonbon");
+                $('.ennemie').hide();
+                $('.candy').hide();
+                $('.retry').show();
+                $(".result").html("Vous avez récupéré " + score + " bonbon !");
+                // alert("Perdu ! Vous avez récupéré " + score + " bonbon");
+
 
             }else{
-                alert("Perdu ! Vous avez récupéré "+score+" bonbons");
+
+                $('.ennemie').hide();
+                $('.candy').hide();
+                $('.retry').show();
+                $(".result").html("Vous avez récupéré " + score + " bonbons !");
+                // alert("Perdu ! Vous avez récupéré " + score + " bonbons");
+
             }
             
 
