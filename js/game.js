@@ -90,7 +90,7 @@
 
     // Affiche un bonbon aléatoirement
     function afficheBonbon() {
-    var candyType = Math.floor(Math.random() * 4);
+    var candyType = Math.floor(Math.random() * 5);
 
         switch (candyType) {
             case 0:
@@ -150,6 +150,20 @@
                     left: randomPosX + "px"
                 });
                 break;
+
+            case 4:
+                var $bonbon = $("#rond");
+                var bonbonWidth = $bonbon.width();
+                var bonbonHeight = $bonbon.height();
+
+                var randomPosX = Math.floor(Math.random() * ($(window).width() - bonbonWidth));
+                var randomPosY = Math.floor(Math.random() * ($(window).height() - bonbonHeight));
+                $bonbon.addClass("currentBonbon");
+                $bonbon.css({
+                    top: randomPosY + "px",
+                    left: randomPosX + "px"
+                });
+                break;    
 
             default:
                 break;
