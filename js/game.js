@@ -62,7 +62,7 @@
             $("#player").css({left: newPosLeft + "px"});
         }
 
-        // Déplacer vers la haut
+        // Déplacer vers le haut
         if (ev.keyCode == 38) {
             if (newPosTop < 0) {
                 newPosTop = 0;
@@ -71,7 +71,7 @@
             $("#player").css({top: newPosTop + "px"});
         }
 
-        // Déplacer vers la bas
+        // Déplacer vers le bas
         if (ev.keyCode == 40) {
             if ((newPosDown + playerWidth) > gameHeight) {
                 newPosDown = gameHeight - playerHeight;
@@ -88,7 +88,7 @@
 
     // Affiche un bonbon aléatoirement
     function afficheBonbon() {
-        var candyType = Math.floor(Math.random() * 3);
+    var candyType = Math.floor(Math.random() * 3);
 
         switch (candyType) {
             case 0:
