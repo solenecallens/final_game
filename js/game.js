@@ -15,7 +15,6 @@
     $('.retry').hide();
 
     $(document).ready(function () {
-        var nbEnemies;
         var randomPosX = Math.random() * $(window).width();
         var randomPosY = Math.random() * $(window).height();
 
@@ -88,7 +87,7 @@
     }
 
 
-    // Affiche un bonbon aléatoirement
+    // Afficher un bonbon aléatoirement
     function afficheBonbon() {
     var candyType = Math.floor(Math.random() * 5);
 
@@ -242,10 +241,6 @@
                 // alert("Perdu ! Vous avez récupéré " + score + " bonbons");
 
             }
-            
-
-            score = 0;
-            $(".currentScore").html(score);
 
         }
     }
@@ -268,6 +263,7 @@
                 afficheBonbon();
         }
     }
+
 
 
     function setScore (){
